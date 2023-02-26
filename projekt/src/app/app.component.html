@@ -1,0 +1,32 @@
+<div class="visualizer">
+  <mat-toolbar class="visualizer__toolbar">
+    <div class="visualizer__toolbar--state">
+      <p>State:</p>
+      <mat-icon *ngIf="visualizationState === VIZUALIZATION_STATE.START">
+        play_circle_filled
+      </mat-icon>
+      <mat-icon *ngIf="visualizationState === VIZUALIZATION_STATE.STOP">
+        stop_circle_filled
+      </mat-icon>
+      <mat-icon *ngIf="visualizationState === VIZUALIZATION_STATE.PAUSE">
+        pause_circle_filled
+      </mat-icon>
+    </div>
+    <div class="visualizer__toolbar--start-stop">
+      <button
+        mat-raised-button
+        [color]="isStarted ? 'warn' : 'accent'"
+        (click)="onStartStop()"
+      >
+        {{ isStarted ? "Stop" : "Start" }}
+      </button>
+    </div>
+    <div class="visualizer__toolbar--pause">
+      <button mat-raised-button [disabled]="!isStarted" (click)="onPause()">
+        Pause
+      </button>
+    </div>
+  </mat-toolbar>
+
+  <div class="visualizer__space"></div>
+</div>
