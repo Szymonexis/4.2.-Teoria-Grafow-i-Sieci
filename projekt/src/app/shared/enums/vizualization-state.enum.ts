@@ -1,5 +1,0 @@
-export enum VIZUALIZATION_STATE {
-  START = 'START',
-  STOP = 'STOP',
-  PAUSE = 'PAUSE',
-}

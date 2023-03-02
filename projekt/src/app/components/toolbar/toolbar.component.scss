@@ -1,0 +1,12 @@
+.toolbar {
+  gap: 1rem;
+
+  &--state {
+    display: flex;
+    align-items: center;
+
+    p {
+      margin-right: 0.5rem;
+    }
+  }
+}
