@@ -8,10 +8,10 @@ import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { GraphSpaceComponent } from './components/graph-space/graph-space.component';
 import { SideMenuComponent } from './components/side-menu/side-menu.component';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
 
-// import * as effects from './state/state.effects';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { simulationReducer } from './state/simulation/simulation.reducer';
 import { reducers } from './state';
 
 @NgModule({
@@ -22,13 +22,8 @@ import { reducers } from './state';
     SideMenuComponent,
   ],
   imports: [
-    // EffectsModule.forRoot(effects),
-    StoreModule.forRoot(reducers, {
-      runtimeChecks: {
-        strictStateImmutability: true,
-        strictActionImmutability: true,
-      },
-    }),
+    StoreModule.forRoot(reducers),
+    StoreDevtoolsModule.instrument(),
     BrowserModule,
     BrowserAnimationsModule,
     MaterialModule,
