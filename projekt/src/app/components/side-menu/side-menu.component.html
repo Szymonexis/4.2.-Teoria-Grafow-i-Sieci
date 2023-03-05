@@ -1,7 +1,8 @@
 <div
   class="side-menu"
   *ngIf="{
-    nodes: nodes$ | async
+    nodes: nodes$ | async,
+    links: links$ | async
   } as viewData"
 >
   <ng-container
@@ -25,7 +26,7 @@
   ></ng-container>
 
   <mat-form-field appearance="fill" class="side-menu__form__field">
-    <mat-label>Select graph from template</mat-label>
+    <mat-label>Select a graph from templates</mat-label>
     <mat-select>
       <mat-option
         *ngFor="let template of nodesAndLinksTemplates | keyvalue"
@@ -41,9 +42,14 @@
     *ngTemplateOutlet="divider; context: { text: 'Nodes' }"
   ></ng-container>
 
+  <ng-container
+    *ngTemplateOutlet="subdivider; context: { text: 'Add new Node' }"
+  ></ng-container>
+
   <form
-    [formGroup]="nodeForm"
-    (ngSubmit)="onSubmitCreateNode(nodeForm)"
+    class="side-menu__form"
+    [formGroup]="createNodeForm"
+    (ngSubmit)="onSubmitCreateNode(createNodeForm)"
     [autocomplete]="false"
   >
     <mat-form-field appearance="fill" class="side-menu__form__field">
@@ -54,25 +60,64 @@
         formControlName="nodeLabel"
         type="text"
       />
-      <button
-        class="side-menu__form__field__button"
-        mat-raised-button
-        matSuffix
-        color="accent"
-        [disabled]="!nodeForm.valid"
-      >
-        Add Node
-      </button>
     </mat-form-field>
+
+    <button
+      class="side-menu__form__button"
+      mat-raised-button
+      matSuffix
+      color="accent"
+      type="reset"
+      [disabled]="!createNodeForm.valid"
+      (click)="onSubmitCreateNode(createNodeForm)"
+    >
+      Add Node
+    </button>
+  </form>
+
+  <ng-container
+    *ngTemplateOutlet="subdivider; context: { text: 'Delete a Node' }"
+  ></ng-container>
+
+  <form
+    class="side-menu__form"
+    [formGroup]="deleteNodeForm"
+    (ngSubmit)="onSubmitDeleteNode(deleteNodeForm)"
+    [autocomplete]="false"
+  >
+    <mat-form-field appearance="fill" class="side-menu__form__field">
+      <mat-label>Select a Node to delete</mat-label>
+      <mat-select formControlName="node">
+        <mat-option *ngFor="let node of viewData?.nodes" [value]="node">
+          {{ node.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button
+      class="side-menu__form__button"
+      mat-raised-button
+      matSuffix
+      color="accent"
+      type="reset"
+      [disabled]="!deleteNodeForm.valid"
+      (click)="onSubmitDeleteNode(deleteNodeForm)"
+    >
+      Delete Node
+    </button>
   </form>
 
   <ng-container
     *ngTemplateOutlet="divider; context: { text: 'Links' }"
   ></ng-container>
 
+  <ng-container
+    *ngTemplateOutlet="subdivider; context: { text: 'Add new Link' }"
+  ></ng-container>
+
   <form
-    [formGroup]="linkForm"
-    (ngSubmit)="onSubmitCreateLink(linkForm)"
+    class="side-menu__form"
+    [formGroup]="createLinkForm"
+    (ngSubmit)="onSubmitCreateLink(createLinkForm)"
     [autocomplete]="false"
   >
     <mat-form-field appearance="fill" class="side-menu__form__field">
@@ -94,7 +139,7 @@
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="side-menu__form__field">
-      <mat-label>Create new Node</mat-label>
+      <mat-label>Provide Link cost</mat-label>
       <input
         matInput
         placeholder="Link cost"
@@ -108,16 +153,58 @@
       mat-raised-button
       matSuffix
       color="accent"
-      [disabled]="!linkForm.valid"
-      (click)="onSubmitCreateLink(linkForm)"
+      type="reset"
+      [disabled]="!createLinkForm.valid"
+      (click)="onSubmitCreateLink(createLinkForm)"
     >
       Add Link
+    </button>
+  </form>
+
+  <ng-container
+    *ngTemplateOutlet="subdivider; context: { text: 'Delete a Link' }"
+  ></ng-container>
+
+  <form
+    class="side-menu__form"
+    [formGroup]="deleteLinkForm"
+    (ngSubmit)="onSubmitDeleteLink(deleteLinkForm)"
+    [autocomplete]="false"
+  >
+    <mat-form-field appearance="fill" class="side-menu__form__field">
+      <mat-label>Select a Link do delete</mat-label>
+      <mat-select formControlName="link">
+        <mat-option *ngFor="let link of viewData?.links" [value]="link">
+          source: {{ getNodeById(link.source, viewData?.nodes).label }}, target:
+          {{ getNodeById(link.target, viewData?.nodes).label }}, cost:
+          {{ link.data.cost }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button
+      class="side-menu__form__button"
+      mat-raised-button
+      matSuffix
+      color="accent"
+      type="reset"
+      [disabled]="!deleteLinkForm.valid"
+      (click)="onSubmitDeleteLink(deleteLinkForm)"
+    >
+      Delete Link
     </button>
   </form>
 </div>
 
 <ng-template #divider let-text="text">
   <div class="side-menu__divider">
+    {{ text }}
+    <hr />
+  </div>
+</ng-template>
+
+<ng-template #subdivider let-text="text">
+  <div class="side-menu__subdivider">
     {{ text }}
     <hr />
   </div>
