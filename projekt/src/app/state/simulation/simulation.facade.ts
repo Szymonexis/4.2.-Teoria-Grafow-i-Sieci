@@ -6,9 +6,7 @@ import { SetVizualizationStatePayload } from './simulation.model';
 import * as selectors from './simulation.selectors';
 import * as actions from './simulation.actions';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class SimulationFacade {
   vizualizationState$ = this.store.pipe(
     select(selectors.selectVizualizationState)

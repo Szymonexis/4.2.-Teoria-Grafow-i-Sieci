@@ -4,7 +4,6 @@ import {
   untilComponentDestroyed,
 } from '@w11k/ngx-componentdestroyed';
 
-import { setVizualizationState } from 'src/app/state/simulation/simulation.actions';
 import { SimulationFacade } from 'src/app/state/simulation/simulation.facade';
 import { VIZUALIZATION_STATE } from 'src/app/state/simulation/simulation.model';
 
@@ -14,11 +13,10 @@ import { VIZUALIZATION_STATE } from 'src/app/state/simulation/simulation.model';
   styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent extends OnDestroyMixin implements OnInit {
-  // visualizationState$ = this.globalFacade.vizualizationState$;
+  visualizationState$ = this.simulationFacade.vizualizationState$;
 
   VIZUALIZATION_STATE = VIZUALIZATION_STATE;
   isStarted = false;
-  visualizationState$ = this.simulationFacade.vizualizationState$;
 
   constructor(private simulationFacade: SimulationFacade) {
     super();

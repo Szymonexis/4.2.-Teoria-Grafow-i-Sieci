@@ -1,18 +1,19 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialModule } from './shared/material.module';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { NgxGraphModule } from '@swimlane/ngx-graph';
+import { MaterialModule } from './shared/material.module';
+
+import { facades, reducers } from './state';
+import { AppComponent } from './app.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { GraphSpaceComponent } from './components/graph-space/graph-space.component';
 import { SideMenuComponent } from './components/side-menu/side-menu.component';
-
-import { StoreModule } from '@ngrx/store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { simulationReducer } from './state/simulation/simulation.reducer';
-import { reducers } from './state';
+import { CloneDeepPipe } from './shared/pipes/clone-deep.pipe';
 
 @NgModule({
   declarations: [
@@ -20,16 +21,19 @@ import { reducers } from './state';
     ToolbarComponent,
     GraphSpaceComponent,
     SideMenuComponent,
+    CloneDeepPipe,
   ],
   imports: [
     StoreModule.forRoot(reducers),
     StoreDevtoolsModule.instrument(),
     BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
     MaterialModule,
     NgxGraphModule,
   ],
-  providers: [],
+  providers: [...facades],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

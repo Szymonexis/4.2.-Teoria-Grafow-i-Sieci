@@ -4,4 +4,24 @@
   background-color: #212121;
   padding: 1rem;
   box-sizing: border-box;
+
+  &__divider {
+    color: white;
+    font-weight: 500;
+    font-size: 20px;
+  }
+
+  &__form {
+    &__button {
+      width: 100%;
+    }
+
+    &__field {
+      width: 100%;
+
+      &__button {
+        margin-right: 0.5rem;
+      }
+    }
+  }
 }

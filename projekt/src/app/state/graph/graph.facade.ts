@@ -14,9 +14,7 @@ import * as selectors from './graph.selectors';
 import * as actions from './graph.actions';
 import { Injectable } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class GraphFacade {
   nodes$ = this.store.pipe(select(selectors.selectNodes));
   links$ = this.store.pipe(select(selectors.selectLinks));

@@ -24,12 +24,12 @@
     "@ngrx/store": "^15.3.0",
     "@ngrx/store-devtools": "^15.3.0",
     "@swimlane/ngx-graph": "^8.0.3",
-    "@types/uuid": "^9.0.1",
     "@w11k/ngx-componentdestroyed": "^5.0.2",
+    "lodash": "^4.17.21",
     "redux-devtools-extension": "^2.13.9",
     "rxjs": "~7.8.0",
+    "short-unique-id": "^4.4.4",
     "tslib": "^2.3.0",
-    "uuid": "^9.0.0",
     "zone.js": "~0.12.0"
   },
   "devDependencies": {
@@ -40,6 +40,7 @@
     "@types/d3-drag": "^3.0.2",
     "@types/d3-timer": "^3.0.0",
     "@types/jasmine": "~4.3.0",
+    "@types/lodash": "^4.14.191",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",

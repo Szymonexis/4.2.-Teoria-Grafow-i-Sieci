@@ -1,1 +1,124 @@
-<div class="side-menu"></div>
+<div
+  class="side-menu"
+  *ngIf="{
+    nodes: nodes$ | async
+  } as viewData"
+>
+  <ng-container
+    *ngTemplateOutlet="divider; context: { text: 'Before Start' }"
+  ></ng-container>
+
+  <mat-form-field appearance="fill" class="side-menu__form__field">
+    <mat-label>Select algo source Node</mat-label>
+    <mat-select>
+      <mat-option
+        *ngFor="let node of viewData?.nodes"
+        (click)="onSourceSelect(node)"
+      >
+        {{ node.label }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <ng-container
+    *ngTemplateOutlet="divider; context: { text: 'Templates' }"
+  ></ng-container>
+
+  <mat-form-field appearance="fill" class="side-menu__form__field">
+    <mat-label>Select graph from template</mat-label>
+    <mat-select>
+      <mat-option
+        *ngFor="let template of nodesAndLinksTemplates | keyvalue"
+        [value]="template.value"
+        (click)="onTemplateSelect(template.value)"
+      >
+        {{ template.key }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <ng-container
+    *ngTemplateOutlet="divider; context: { text: 'Nodes' }"
+  ></ng-container>
+
+  <form
+    [formGroup]="nodeForm"
+    (ngSubmit)="onSubmitCreateNode(nodeForm)"
+    [autocomplete]="false"
+  >
+    <mat-form-field appearance="fill" class="side-menu__form__field">
+      <mat-label>Create new Node</mat-label>
+      <input
+        matInput
+        placeholder="Node label"
+        formControlName="nodeLabel"
+        type="text"
+      />
+      <button
+        class="side-menu__form__field__button"
+        mat-raised-button
+        matSuffix
+        color="accent"
+        [disabled]="!nodeForm.valid"
+      >
+        Add Node
+      </button>
+    </mat-form-field>
+  </form>
+
+  <ng-container
+    *ngTemplateOutlet="divider; context: { text: 'Links' }"
+  ></ng-container>
+
+  <form
+    [formGroup]="linkForm"
+    (ngSubmit)="onSubmitCreateLink(linkForm)"
+    [autocomplete]="false"
+  >
+    <mat-form-field appearance="fill" class="side-menu__form__field">
+      <mat-label>Select source Node</mat-label>
+      <mat-select formControlName="source">
+        <mat-option *ngFor="let node of viewData?.nodes" [value]="node">
+          {{ node.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="side-menu__form__field">
+      <mat-label>Select target Node</mat-label>
+      <mat-select formControlName="target">
+        <mat-option *ngFor="let node of viewData?.nodes" [value]="node">
+          {{ node.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="side-menu__form__field">
+      <mat-label>Create new Node</mat-label>
+      <input
+        matInput
+        placeholder="Link cost"
+        formControlName="cost"
+        type="number"
+      />
+    </mat-form-field>
+
+    <button
+      class="side-menu__form__button"
+      mat-raised-button
+      matSuffix
+      color="accent"
+      [disabled]="!linkForm.valid"
+      (click)="onSubmitCreateLink(linkForm)"
+    >
+      Add Link
+    </button>
+  </form>
+</div>
+
+<ng-template #divider let-text="text">
+  <div class="side-menu__divider">
+    {{ text }}
+    <hr />
+  </div>
+</ng-template>

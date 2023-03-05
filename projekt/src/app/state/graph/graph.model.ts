@@ -1,29 +1,37 @@
-import { v4 as uudi } from 'uuid';
+import ShortUniqueId from 'short-unique-id';
 
 export type Id = string;
 
+const uid = new ShortUniqueId({ length: 10, dictionary: 'alpha' });
+
 export enum COLOR {
-  CURRENT = '#ff0000',
-  SOLVED = '#00ff00',
-  UNSOLVED = '#0000ff',
-  BLACK = '#000000'
+  CURRENT = '#e9c46a',
+  SOLVED = '#2a9d8f',
+  UNSOLVED = '#e76f51',
+  BLACK = '#000000',
 }
 
 export interface Data {
-  color: COLOR;
+  customColor: COLOR;
 }
+
+export interface LinkData extends Data {
+  cost: number;
+}
+
+export interface NodeData extends Data {}
 
 export interface Link {
   id: Id;
   source: Id;
   target: Id;
-  data: Data;
+  data: LinkData;
 }
 
 export interface Node {
   id: Id;
   label: string;
-  data: Data;
+  data: NodeData;
 }
 
 export interface GraphState {
@@ -48,24 +56,69 @@ export type EditLinkPayload = Link;
 
 export type DeleteLinkPayload = Pick<Link, 'id'>;
 
-export type NodesAndLinksTemplatePayload = GraphState;
+export type NodesAndLinksTemplatePayload = Omit<GraphState, 'showGraph'>;
+
+export type NodesAndLinksTemplate = Omit<GraphState, 'showGraph'>;
 
 export interface NodesAndLinksTemplates {
-  [key: string]: GraphState;
+  [key: string]: NodesAndLinksTemplate;
 }
 
-const _generateNodes = (labels: string[]): Node[] =>
-  labels.map((label) => ({
-    id: uudi(),
-    label,
-    data: { color: COLOR.UNSOLVED },
-  }));
+export const uuid = () => uid();
 
-// const _generateLinks = (nodes: Node[]): Link[] => 
+const _generateNodes = (labels: string[]): Node[] =>
+  [...new Set(labels.map((label) => label.toUpperCase().trim()))].map(
+    (label) => ({
+      id: label,
+      label,
+      data: { customColor: COLOR.UNSOLVED },
+    })
+  );
+
+const _generateLinks = (connections: {
+  [key: string]: { target: string; cost: number }[];
+}): Link[] =>
+  Object.keys(connections)
+    .map((source) => source.toUpperCase().trim())
+    .map<Link[]>((source) =>
+      connections[source]
+        .map(({ target, cost }) => ({
+          target: target.toUpperCase().trim(),
+          cost,
+        }))
+        .map<Link>(({ target, cost }) => ({
+          id: uuid(),
+          source,
+          target,
+          data: {
+            customColor: COLOR.BLACK,
+            cost,
+          },
+        }))
+    )
+    .flat();
 
 export const nodesAndLinksTemplates: NodesAndLinksTemplates = {
-  template1: {
+  'Template 1': {
     nodes: _generateNodes(['A', 'B', 'C', 'D']),
-    links: [],
+    links: _generateLinks({
+      A: [
+        { target: 'B', cost: 3 },
+        { target: 'C', cost: 1 },
+      ],
+      B: [
+        { target: 'A', cost: 9 },
+        { target: 'C', cost: 2 },
+      ],
+      C: [
+        { target: 'D', cost: 3 },
+        { target: 'A', cost: 13 },
+      ],
+      D: [
+        { target: 'B', cost: 6 },
+        { target: 'A', cost: 2 },
+        { target: 'C', cost: 1 },
+      ],
+    }),
   },
 };

@@ -1,46 +1,23 @@
-<div class="space">
+<div
+  class="space"
+  *ngIf="{
+    links: links$ | async,
+    nodes: nodes$ | async
+  } as viewData"
+>
   <ngx-graph
     class="space__chart-container"
-    [showMiniMap]="true"
-    [links]="[
-      {
-        id: 'a',
-        source: 'first',
-        target: 'second',
-        data: {
-          color: '#ff00ff'
-        }
-      },
-      {
-        id: 'b',
-        source: 'first',
-        target: 'third',
-        data: {
-          color: '#ff00ff'
-        }
-      }
-    ]"
-    [nodes]="[
-      {
-        id: 'first',
-        label: 'A'
-      },
-      {
-        id: 'second',
-        label: 'B'
-      },
-      {
-        id: 'third',
-        label: 'C'
-      }
-    ]"
+    [autoCenter]="true"
+    [autoZoom]="true"
+    [links]="viewData?.links | cloneDeep"
+    [nodes]="viewData?.nodes | cloneDeep"
   >
     <ng-template #nodeTemplate let-node>
       <svg:g class="node">
         <svg:rect
           [attr.width]="node.dimension.width"
           [attr.height]="node.dimension.height"
-          [attr.fill]="node.data.color"
+          [attr.fill]="node.data.customColor"
         />
         <svg:text
           alignment-baseline="central"
@@ -72,8 +49,20 @@
           class="line"
           stroke-width="2"
           marker-end="url(#arrow)"
-          [attr.stroke]="link.data.color"
+          [attr.stroke]="link.data.customColor"
         ></svg:path>
+        <svg:text class="edge-label" text-anchor="middle">
+          <textPath
+            class="text-path"
+            [attr.href]="'#' + link.id"
+            [style.dominant-baseline]="link.dominantBaseline"
+            startOffset="50%"
+            font-size="20"
+            font-weight="500"
+          >
+            {{ link.data.cost }}
+          </textPath>
+        </svg:text>
       </svg:g>
     </ng-template>
   </ngx-graph>
