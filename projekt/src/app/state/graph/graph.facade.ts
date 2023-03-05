@@ -48,4 +48,8 @@ export class GraphFacade {
   deleteLink(payload: DeleteLinkPayload): void {
     this.store.dispatch(actions.deleteLink(payload));
   }
+
+  colorShow(): void {
+    this.store.dispatch(actions.colorShow());
+  }
 }

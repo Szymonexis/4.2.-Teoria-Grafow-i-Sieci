@@ -1,7 +1,10 @@
 import { createReducer, on } from '@ngrx/store';
-import { initialState, uuid } from './graph.model';
+import { COLOR, initialState, uuid } from './graph.model';
 
 import * as actions from './graph.actions';
+
+const generateRandomColor = (): COLOR =>
+  `#${Math.floor(Math.random() * 16777215).toString(16)}` as COLOR;
 
 export const graphReducer = createReducer(
   initialState,
@@ -18,10 +21,12 @@ export const graphReducer = createReducer(
 
   on(actions.deleteNode, (state, { id: nodeId }) => ({
     ...state,
-    nodes: state.nodes.filter(({ id }) => id !== nodeId),
-    links: state.links.filter(
-      ({ source, target }) => source !== nodeId && target !== nodeId
-    ),
+    nodes: [...state.nodes.filter(({ id }) => id !== nodeId)],
+    links: [
+      ...state.links.filter(
+        ({ source, target }) => source !== nodeId && target !== nodeId
+      ),
+    ],
   })),
 
   on(actions.createLink, (state, { source, target, data }) => ({
@@ -31,6 +36,28 @@ export const graphReducer = createReducer(
 
   on(actions.deleteLink, (state, { id: linkId }) => ({
     ...state,
-    links: state.links.filter(({ id }) => id !== linkId),
+    links: [...state.links.filter(({ id }) => id !== linkId)],
+  })),
+
+  on(actions.colorShow, (state) => ({
+    ...state,
+    nodes: [
+      ...state.nodes.map((node) => ({
+        ...node,
+        data: {
+          ...node.data,
+          customColor: generateRandomColor(),
+        },
+      })),
+    ],
+    links: [
+      ...state.links.map((link) => ({
+        ...link,
+        data: {
+          ...link.data,
+          customColor: generateRandomColor(),
+        },
+      })),
+    ],
   }))
 );

@@ -8,12 +8,15 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { MaterialModule } from './shared/material.module';
 
-import { facades, reducers } from './state';
+import { CloneDeepPipe } from './shared/pipes/clone-deep.pipe';
+import { EasterEggPipe } from './shared/pipes/easter-egg.pipe';
+
 import { AppComponent } from './app.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { GraphSpaceComponent } from './components/graph-space/graph-space.component';
 import { SideMenuComponent } from './components/side-menu/side-menu.component';
-import { CloneDeepPipe } from './shared/pipes/clone-deep.pipe';
+
+import { facades, reducers } from './state';
 
 @NgModule({
   declarations: [
@@ -22,6 +25,7 @@ import { CloneDeepPipe } from './shared/pipes/clone-deep.pipe';
     GraphSpaceComponent,
     SideMenuComponent,
     CloneDeepPipe,
+    EasterEggPipe,
   ],
   imports: [
     StoreModule.forRoot(reducers),

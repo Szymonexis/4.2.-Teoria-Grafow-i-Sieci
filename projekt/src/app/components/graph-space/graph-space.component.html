@@ -7,8 +7,6 @@
 >
   <ngx-graph
     class="space__chart-container"
-    [autoCenter]="true"
-    [autoZoom]="true"
     [links]="viewData?.links | cloneDeep"
     [nodes]="viewData?.nodes | cloneDeep"
   >
@@ -60,7 +58,7 @@
             font-size="20"
             font-weight="500"
           >
-            {{ link.data.cost }}
+            {{ link.data.cost | easterEgg }}
           </textPath>
         </svg:text>
       </svg:g>

@@ -43,3 +43,5 @@ export const deleteLink = createAction(
   '[Graph] Delete link',
   props<DeleteLinkPayload>()
 );
+
+export const colorShow = createAction('[Test] Color Show');

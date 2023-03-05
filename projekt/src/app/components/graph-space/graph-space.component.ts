@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
-import { OnDestroyMixin } from '@w11k/ngx-componentdestroyed';
+import { Component, OnInit } from '@angular/core';
+import {
+  OnDestroyMixin,
+  untilComponentDestroyed,
+} from '@w11k/ngx-componentdestroyed';
+import { interval } from 'rxjs';
 import { GraphFacade } from 'src/app/state/graph/graph.facade';
 
 @Component({
@@ -7,11 +11,20 @@ import { GraphFacade } from 'src/app/state/graph/graph.facade';
   templateUrl: './graph-space.component.html',
   styleUrls: ['./graph-space.component.scss'],
 })
-export class GraphSpaceComponent extends OnDestroyMixin {
+export class GraphSpaceComponent extends OnDestroyMixin implements OnInit {
   links$ = this.graphFacade.links$;
   nodes$ = this.graphFacade.nodes$;
 
   constructor(private graphFacade: GraphFacade) {
     super();
+  }
+
+  ngOnInit(): void {
+    // @TODO: for dev purposes
+    // interval(1000)
+    //   .pipe(untilComponentDestroyed(this))
+    //   .subscribe(() => {
+    //     this.graphFacade.colorShow();
+    //   });
   }
 }
