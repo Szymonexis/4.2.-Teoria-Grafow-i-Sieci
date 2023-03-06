@@ -24,6 +24,7 @@ import {
 export class SideMenuComponent implements OnInit {
   nodes$ = this.graphFacade.nodes$;
   links$ = this.graphFacade.links$;
+  source$ = this.graphFacade.source$;
 
   nodesAndLinksTemplates = nodesAndLinksTemplates;
 
@@ -58,8 +59,11 @@ export class SideMenuComponent implements OnInit {
   }
 
   onSourceSelect(source: Node): void {
-    // @TODO: to be sent to store
-    console.log({ source });
+    if (!source) {
+      return;
+    }
+
+    this.graphFacade.setAlgoSourceNode({ source });
   }
 
   onTemplateSelect(template: NodesAndLinksTemplate): void {

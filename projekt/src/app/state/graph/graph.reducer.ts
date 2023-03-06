@@ -14,6 +14,11 @@ export const graphReducer = createReducer(
     links,
   })),
 
+  on(actions.setAlgoSourceNode, (state, { source }) => ({
+    ...state,
+    source,
+  })),
+
   on(actions.createNode, (state, { label, data }) => ({
     ...state,
     nodes: [...state.nodes, { id: uuid(), label, data }],

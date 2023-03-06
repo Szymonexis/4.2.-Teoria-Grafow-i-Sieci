@@ -4,6 +4,7 @@ import {
   untilComponentDestroyed,
 } from '@w11k/ngx-componentdestroyed';
 
+import { BellmanFordService } from 'src/app/services/bellman-ford.service';
 import { SimulationFacade } from 'src/app/state/simulation/simulation.facade';
 import { VIZUALIZATION_STATE } from 'src/app/state/simulation/simulation.model';
 
@@ -18,7 +19,10 @@ export class ToolbarComponent extends OnDestroyMixin implements OnInit {
   VIZUALIZATION_STATE = VIZUALIZATION_STATE;
   isStarted = false;
 
-  constructor(private simulationFacade: SimulationFacade) {
+  constructor(
+    private simulationFacade: SimulationFacade,
+    private ballmanFordService: BellmanFordService
+  ) {
     super();
   }
 
@@ -27,6 +31,12 @@ export class ToolbarComponent extends OnDestroyMixin implements OnInit {
       .pipe(untilComponentDestroyed(this))
       .subscribe((visualizationState) => {
         this.isStarted = visualizationState === VIZUALIZATION_STATE.START;
+
+        if (this.isStarted) {
+          this.ballmanFordService.init();
+          this.ballmanFordService.compute();
+          this.ballmanFordService.reset();
+        }
       });
   }
 

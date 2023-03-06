@@ -2,7 +2,8 @@
   class="side-menu"
   *ngIf="{
     nodes: nodes$ | async,
-    links: links$ | async
+    links: links$ | async,
+    source: source$ | async
   } as viewData"
 >
   <ng-container
@@ -11,10 +12,11 @@
 
   <mat-form-field appearance="fill" class="side-menu__form__field">
     <mat-label>Select algo source Node</mat-label>
-    <mat-select>
+    <mat-select [value]="viewData?.source">
       <mat-option
         *ngFor="let node of viewData?.nodes"
         (click)="onSourceSelect(node)"
+        [value]="node"
       >
         {{ node.label }}
       </mat-option>

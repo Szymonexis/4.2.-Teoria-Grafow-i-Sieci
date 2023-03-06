@@ -20,7 +20,7 @@ export class GraphSpaceComponent extends OnDestroyMixin implements OnInit {
   }
 
   ngOnInit(): void {
-    // @TODO: for dev purposes
+    // @TODO: for `fun` dev purposes :3
     // interval(1000)
     //   .pipe(untilComponentDestroyed(this))
     //   .subscribe(() => {

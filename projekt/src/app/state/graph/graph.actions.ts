@@ -6,12 +6,18 @@ import {
   DeleteNodePayload,
   EditLinkPayload,
   EditNodePayload,
+  NodePayload,
   NodesAndLinksTemplatePayload,
 } from './graph.model';
 
 export const setNodesAndLinksTemplate = createAction(
   '[Graph] Set nodes and links template',
   props<NodesAndLinksTemplatePayload>()
+);
+
+export const setAlgoSourceNode = createAction(
+  '[Graph] Set algo source node',
+  props<NodePayload>()
 );
 
 export const createNode = createAction(

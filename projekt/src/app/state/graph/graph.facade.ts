@@ -6,6 +6,7 @@ import {
   DeleteNodePayload,
   EditLinkPayload,
   EditNodePayload,
+  NodePayload,
   NodesAndLinksTemplatePayload,
 } from './graph.model';
 import { AppState } from '..';
@@ -18,11 +19,16 @@ import { Injectable } from '@angular/core';
 export class GraphFacade {
   nodes$ = this.store.pipe(select(selectors.selectNodes));
   links$ = this.store.pipe(select(selectors.selectLinks));
+  source$ = this.store.pipe(select(selectors.selectSource));
 
   constructor(private store: Store<AppState>) {}
 
   setNodesAndLinksTemplate(payload: NodesAndLinksTemplatePayload): void {
     this.store.dispatch(actions.setNodesAndLinksTemplate(payload));
+  }
+
+  setAlgoSourceNode(payload: NodePayload): void {
+    this.store.dispatch(actions.setAlgoSourceNode(payload));
   }
 
   createNode(payload: CreateNodePayload): void {

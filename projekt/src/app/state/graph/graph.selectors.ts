@@ -13,3 +13,8 @@ export const selectLinks = createSelector(
   selectSimulationState,
   (state: GraphState) => state.links
 );
+
+export const selectSource = createSelector(
+  selectSimulationState,
+  (state: GraphState) => state.source
+);

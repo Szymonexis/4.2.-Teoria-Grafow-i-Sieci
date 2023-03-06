@@ -37,12 +37,18 @@ export interface Node {
 export interface GraphState {
   nodes: Node[];
   links: Link[];
+  source: Node;
 }
 
 export const initialState: GraphState = {
   nodes: [],
   links: [],
+  source: null,
 };
+
+export interface NodePayload {
+  source: Node;
+}
 
 export type CreateNodePayload = Omit<Node, 'id'>;
 
@@ -56,9 +62,9 @@ export type EditLinkPayload = Link;
 
 export type DeleteLinkPayload = Pick<Link, 'id'>;
 
-export type NodesAndLinksTemplatePayload = Omit<GraphState, 'showGraph'>;
+export type NodesAndLinksTemplatePayload = Omit<GraphState, 'source'>;
 
-export type NodesAndLinksTemplate = Omit<GraphState, 'showGraph'>;
+export type NodesAndLinksTemplate = Omit<GraphState, 'source'>;
 
 export interface NodesAndLinksTemplates {
   [key: string]: NodesAndLinksTemplate;
