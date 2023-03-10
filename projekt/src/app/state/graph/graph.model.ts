@@ -70,7 +70,7 @@ export interface NodesAndLinksTemplates {
   [key: string]: NodesAndLinksTemplate;
 }
 
-export const uuid = () => uid();
+export const uuid = (): string => uid();
 
 const _generateNodes = (labels: string[]): Node[] =>
   [...new Set(labels.map((label) => label.toUpperCase().trim()))].map(
@@ -106,6 +106,21 @@ const _generateLinks = (connections: {
 
 export const nodesAndLinksTemplates: NodesAndLinksTemplates = {
   'Template 1': {
+    nodes: _generateNodes(['A', 'B', 'C', 'D', 'E']),
+    links: _generateLinks({
+      A: [
+        { target: 'B', cost: 2 },
+        { target: 'C', cost: 4 },
+      ],
+      B: [{ target: 'D', cost: 2 }],
+      C: [
+        { target: 'D', cost: 4 },
+        { target: 'E', cost: 3 },
+      ],
+      E: [{ target: 'D', cost: -5 }],
+    }),
+  },
+  'Template 2': {
     nodes: _generateNodes(['A', 'B', 'C', 'D']),
     links: _generateLinks({
       A: [

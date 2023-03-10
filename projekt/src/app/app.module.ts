@@ -9,7 +9,7 @@ import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { MaterialModule } from './shared/material.module';
 
 import { CloneDeepPipe } from './shared/pipes/clone-deep.pipe';
-import { EasterEggPipe } from './shared/pipes/easter-egg.pipe';
+import { CostPipe } from './shared/pipes/cost.pipe';
 
 import { AppComponent } from './app.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
@@ -25,7 +25,7 @@ import { facades, reducers } from './state';
     GraphSpaceComponent,
     SideMenuComponent,
     CloneDeepPipe,
-    EasterEggPipe,
+    CostPipe,
   ],
   imports: [
     StoreModule.forRoot(reducers),

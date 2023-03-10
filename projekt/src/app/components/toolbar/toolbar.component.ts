@@ -21,7 +21,7 @@ export class ToolbarComponent extends OnDestroyMixin implements OnInit {
 
   constructor(
     private simulationFacade: SimulationFacade,
-    private ballmanFordService: BellmanFordService
+    private bellmanFordService: BellmanFordService
   ) {
     super();
   }
@@ -31,11 +31,18 @@ export class ToolbarComponent extends OnDestroyMixin implements OnInit {
       .pipe(untilComponentDestroyed(this))
       .subscribe((visualizationState) => {
         this.isStarted = visualizationState === VIZUALIZATION_STATE.START;
+        const isStopped = visualizationState === VIZUALIZATION_STATE.STOP;
 
         if (this.isStarted) {
-          this.ballmanFordService.init();
-          this.ballmanFordService.compute();
-          this.ballmanFordService.reset();
+          this.bellmanFordService.init();
+          this.bellmanFordService.compute();
+        }
+
+        if (isStopped) {
+          const { simulationGraph, simulationSteps } =
+            this.bellmanFordService.reset();
+
+          console.log({ simulationGraph, simulationSteps });
         }
       });
   }
