@@ -1,14 +1,14 @@
 <div
   class="space"
   *ngIf="{
-    links: links$ | async,
-    nodes: nodes$ | async
+    links: links | cloneDeep,
+    nodes: nodes | cloneDeep
   } as viewData"
 >
   <ngx-graph
     class="space__chart-container"
-    [links]="viewData?.links | cloneDeep"
-    [nodes]="viewData?.nodes | cloneDeep"
+    [links]="viewData?.links"
+    [nodes]="viewData?.nodes"
   >
     <ng-template #nodeTemplate let-node>
       <svg:g class="node">

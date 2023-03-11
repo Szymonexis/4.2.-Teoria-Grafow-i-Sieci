@@ -3,10 +3,15 @@ import {
   OnDestroyMixin,
   untilComponentDestroyed,
 } from '@w11k/ngx-componentdestroyed';
+import { delay } from 'lodash';
+import { combineLatest, interval, subscribeOn, takeUntil } from 'rxjs';
 
 import { BellmanFordService } from 'src/app/services/bellman-ford.service';
 import { SimulationFacade } from 'src/app/state/simulation/simulation.facade';
-import { VIZUALIZATION_STATE } from 'src/app/state/simulation/simulation.model';
+import {
+  SimulationStep,
+  VIZUALIZATION_STATE,
+} from 'src/app/state/simulation/simulation.model';
 
 @Component({
   selector: 'app-toolbar',
@@ -15,9 +20,16 @@ import { VIZUALIZATION_STATE } from 'src/app/state/simulation/simulation.model';
 })
 export class ToolbarComponent extends OnDestroyMixin implements OnInit {
   visualizationState$ = this.simulationFacade.vizualizationState$;
+  simulationData$ = this.simulationFacade.simulationData$;
+  simulationSteps$ = this.simulationFacade.simulationSteps$;
 
   VIZUALIZATION_STATE = VIZUALIZATION_STATE;
   isStarted = false;
+  isStopped = true;
+  isPaused = false;
+
+  private _simulationStepIndex = 0;
+  private _simulationSteps: SimulationStep[] = [];
 
   constructor(
     private simulationFacade: SimulationFacade,
@@ -31,19 +43,35 @@ export class ToolbarComponent extends OnDestroyMixin implements OnInit {
       .pipe(untilComponentDestroyed(this))
       .subscribe((visualizationState) => {
         this.isStarted = visualizationState === VIZUALIZATION_STATE.START;
-        const isStopped = visualizationState === VIZUALIZATION_STATE.STOP;
+        this.isPaused = visualizationState === VIZUALIZATION_STATE.PAUSE;
+        this.isStopped = visualizationState === VIZUALIZATION_STATE.STOP;
 
         if (this.isStarted) {
           this.bellmanFordService.init();
           this.bellmanFordService.compute();
         }
 
-        if (isStopped) {
-          const { simulationGraph, simulationSteps } =
-            this.bellmanFordService.reset();
-
-          console.log({ simulationGraph, simulationSteps });
+        if (this.isStopped) {
+          this.bellmanFordService.reset();
         }
+      });
+
+    this.simulationSteps$
+      .pipe(untilComponentDestroyed(this))
+      .subscribe((simulationSteps) => {
+        this._simulationSteps = simulationSteps;
+      });
+
+    // @TODO: add reaction to start and stop,
+    // add interval setting, investigate very wrong steps
+    interval(5000)
+      .pipe(untilComponentDestroyed(this))
+      .subscribe(() => {
+        this.simulationFacade.showNextSimulationStep(
+          this._simulationSteps[this._simulationStepIndex]
+        );
+
+        this._simulationStepIndex += 1;
       });
   }
 

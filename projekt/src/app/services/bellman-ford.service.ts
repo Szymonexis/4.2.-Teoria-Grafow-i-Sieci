@@ -3,38 +3,15 @@ import { cloneDeep } from 'lodash';
 import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
 import { GraphFacade } from '../state/graph/graph.facade';
 import { COLOR, Id, Link, Node, uuid } from '../state/graph/graph.model';
-
-export interface BellmanFordEdge {
-  id: Id;
-  source: Id;
-  target: Id;
-  cost: number;
-}
-
-export interface SimulationStep {
-  source: Id;
-  target: Id;
-  cost: number;
-}
-
-export interface SimulationGraph {
-  nodes: Node[];
-  links: Link[];
-}
-
-export interface Simulation {
-  simulationGraph: SimulationGraph;
-  simulationSteps: SimulationStep[];
-}
-
-export interface IdTranslation {
-  oldId: Id;
-  newId: Id;
-}
-
-export interface Distances {
-  [key: Id]: number;
-}
+import { SimulationFacade } from '../state/simulation/simulation.facade';
+import {
+  BellmanFordEdge,
+  SimulationStep,
+  SimulationGraph,
+  IdTranslation,
+  SimulationData,
+  Distances,
+} from '../state/simulation/simulation.model';
 
 @Injectable({
   providedIn: 'root',
@@ -55,7 +32,10 @@ export class BellmanFordService {
   private _algoSimulationGraph: SimulationGraph;
   private _idsTranslations: IdTranslation[];
 
-  constructor(private graphFacade: GraphFacade) {}
+  constructor(
+    private graphFacade: GraphFacade,
+    private simulationFacade: SimulationFacade
+  ) {}
 
   init(): void {
     combineLatest([
@@ -86,22 +66,21 @@ export class BellmanFordService {
           return;
         }
 
-        this._algo();
+        const simulationData = this._algo();
+
+        this.simulationFacade.setSimulationData(simulationData);
       }
     );
   }
 
   // @TODO: add types
-  reset(): Simulation {
+  reset() {
     this._isInitalized$.next(false);
     this._hasSource$.next(false);
 
     if (this._isInitializedSubscription) {
       this._isInitializedSubscription.unsubscribe();
     }
-
-    const simulationGraph = cloneDeep(this._algoSimulationGraph);
-    const simulationSteps = cloneDeep(this._simulationSteps);
 
     this._algoSimulationGraph = null;
     this._simulationSteps = [];
@@ -110,11 +89,9 @@ export class BellmanFordService {
     this._graph = [];
     this._vertices = 0;
     this._source = '';
-
-    return { simulationGraph, simulationSteps };
   }
 
-  private _algo(): void {
+  private _algo(): SimulationData {
     const infinity = Number.POSITIVE_INFINITY;
 
     const distances: Distances = this._nodes.reduce<Distances>(
@@ -141,12 +118,6 @@ export class BellmanFordService {
             target,
             cost: distances[source] + cost,
           });
-        } else {
-          this._simulationSteps.push({
-            source,
-            target,
-            cost: distances[source],
-          });
         }
       });
     }
@@ -161,6 +132,19 @@ export class BellmanFordService {
     });
 
     this._printSolution(distances);
+
+    const simulationGraph = this._algoSimulationGraph;
+    const simulationSteps = this._simulationSteps.map(
+      ({ source, target, cost }) => ({
+        source: this._idsTranslations.find(({ oldId }) => oldId === source)
+          .newId,
+        target: this._idsTranslations.find(({ oldId }) => oldId === target)
+          .newId,
+        cost,
+      })
+    );
+
+    return { simulationGraph, simulationSteps };
   }
 
   private _addEdge(edge: BellmanFordEdge): void {

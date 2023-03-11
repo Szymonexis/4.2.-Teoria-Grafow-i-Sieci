@@ -3,8 +3,10 @@ import {
   OnDestroyMixin,
   untilComponentDestroyed,
 } from '@w11k/ngx-componentdestroyed';
-import { interval } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { GraphFacade } from 'src/app/state/graph/graph.facade';
+import { Link, Node } from 'src/app/state/graph/graph.model';
+import { SimulationFacade } from 'src/app/state/simulation/simulation.facade';
 
 @Component({
   selector: 'app-graph-space',
@@ -12,19 +14,26 @@ import { GraphFacade } from 'src/app/state/graph/graph.facade';
   styleUrls: ['./graph-space.component.scss'],
 })
 export class GraphSpaceComponent extends OnDestroyMixin implements OnInit {
-  links$ = this.graphFacade.links$;
-  nodes$ = this.graphFacade.nodes$;
+  private _links$ = this.graphFacade.links$;
+  private _nodes$ = this.graphFacade.nodes$;
+  private _simulationData$ = this.simulationFacade.simulationData$;
 
-  constructor(private graphFacade: GraphFacade) {
+  nodes: Node[];
+  links: Link[];
+
+  constructor(
+    private graphFacade: GraphFacade,
+    private simulationFacade: SimulationFacade
+  ) {
     super();
   }
 
   ngOnInit(): void {
-    // @TODO: for `fun` dev purposes :3
-    // interval(1000)
-    //   .pipe(untilComponentDestroyed(this))
-    //   .subscribe(() => {
-    //     this.graphFacade.colorShow();
-    //   });
+    combineLatest([this._nodes$, this._links$, this._simulationData$])
+      .pipe(untilComponentDestroyed(this))
+      .subscribe(([nodes, links, { simulationNodes, simulationLinks }]) => {
+        this.links = [...links, ...simulationLinks];
+        this.nodes = [...nodes, ...simulationNodes];
+      });
   }
 }
