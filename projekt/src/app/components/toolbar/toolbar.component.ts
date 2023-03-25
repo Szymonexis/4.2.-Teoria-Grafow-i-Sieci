@@ -64,14 +64,24 @@ export class ToolbarComponent extends OnDestroyMixin implements OnInit {
 
     // @TODO: add reaction to start and stop,
     // add interval setting, investigate very wrong steps
-    interval(5000)
+    interval(1000)
       .pipe(untilComponentDestroyed(this))
       .subscribe(() => {
+        if (!this.isStarted || this.isPaused) {
+          return;
+        }
+
         this.simulationFacade.showNextSimulationStep(
           this._simulationSteps[this._simulationStepIndex]
         );
 
         this._simulationStepIndex += 1;
+
+        if (this._simulationStepIndex >= this._simulationSteps.length) {
+          this.simulationFacade.setVizualizationState({
+            vizualizationState: VIZUALIZATION_STATE.STOP,
+          });
+        }
       });
   }
 
@@ -80,6 +90,9 @@ export class ToolbarComponent extends OnDestroyMixin implements OnInit {
       this.simulationFacade.setVizualizationState({
         vizualizationState: VIZUALIZATION_STATE.STOP,
       });
+
+      this._simulationStepIndex = 0;
+
       return;
     }
 

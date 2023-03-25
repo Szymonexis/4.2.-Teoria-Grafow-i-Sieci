@@ -114,7 +114,7 @@ export class BellmanFordService {
           distances[target] = distances[source] + cost;
 
           this._simulationSteps.push({
-            source,
+            source: this._source,
             target,
             cost: distances[source] + cost,
           });
