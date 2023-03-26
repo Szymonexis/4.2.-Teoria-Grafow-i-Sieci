@@ -1,12 +1,99 @@
 ---
-marp: true
-theme: default
-class: invert
+theme: gaia
+_class: lead
+paginate: true
 math: katex
-style: |
-  .two-columns {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-  }
+backgroundColor: #fff
+backgroundImage: url('https://marp.app/assets/hero-background.svg')
+marp: true
 ---
+
+<style>
+{
+  font-size: 32px;
+  padding: 1rem 1.5rem;
+}
+</style>
+
+# Algorytm Bellmana-Forda
+
+#### Szukanie najkrótszej ścieżki w grafie ważonym
+
+Maciej Luciński, Szymon Kaszuba-Gałka
+
+---
+
+# Metoda relaksacji
+
+Algorytm Bellmana-Forda opiera sie na idei Metody Relaksacji czyli na sprawdzeniu czy przy przejściu daną krawędzią grafu nie otrzymamy ścieżki krótszej niż dotychczasowa ścieżka.
+
+Jeżeli tak to zmieniamy oszacowanie wagi najkrótszej ścieżki na aktualne oszacowanie.
+
+---
+
+# Przykład użycia Metody Relaksacji
+
+Obliczona droga z $x$ do $z$ jest kosztu $6$. Natomiast następna obliczona droga przez wierzchołek $y$ jest kosztu $3$. Zatem dla wierzchołka $x$ najkrótsza droga $d[z] = 6$ zostanie nadpisana do $d[z] = 3$
+
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
+![w:22cm center](./przyklad_relaksacji.png)
+
+---
+
+# Złożoność czasowa i pamięciowa algorytmu Bellman'a-Ford'a
+
+Dla wartości $V$ oznaczającej zbiór wierzchołków oraz $E$ oznaczającej zbiór krawędzi dla grafu $G$:
+
+- złożoność czasowa wynosi $O(|V| \cdot |E|)$
+- złożoność pamięciowa wynosi $O(|V|)$
+
+---
+
+# Przykład
+
+@TODO
+
+---
+
+# Pseudokod
+
+<style scoped>
+pre {
+   background-color: rgb(25, 25, 25);
+   border-radius: 0.5rem;
+   padding: 0.25rem;
+}
+</style>
+
+```python
+def bellman_ford(src):
+    # 1. Nadaj kazdemu z wierzchołków inf jako odległośc od żródła i przypisz żródłu odległość od niego samego == 0
+    distances = [float("Inf")] * vertices_num
+    distances[src] = 0
+
+    # 2.0. Przejdź każdy wierzchołek (bez wierzchołka żródła) - złożoność obliczeniowa O(|V|*|E|)
+    for _ in range(vertices_num - 1):
+        # 2.1. Przejdź każdą krawędź gdzie source to w. początkowy, target to w. końcowy a cost to waga
+        for source, target, cost in graph:
+            # 2.2. Jeżeli waga dla w. początkowego jest już obliczona i waga drogi dla w. początkowego + waga aktualnej
+            # krawędzi jest mniejsza od aktualnej wagi drogi dla w. końcowego (skorzystanie z Metody Relaksacji)
+            if distances[source] != float("Inf") and distances[source] + cost < distances[target]:
+                # 2.3. To zapisz wage drogi dla w. początkowego + waga aktualnej krawędzi jako
+                # nową wagę drogi dla w. końcowego
+                distances[target] = distances[source] + cost
+
+    # 3.0. Dla każdej krawędzi grafu sprawdź czy nie istnieje ujemny cykl - złożoność obliczeniowa O(|E|)
+    for source, target, cost in graph:
+        # 3.1. Jeżeli droga dla danego w. początkowego jest różna od inf i waga drogi dla w. początkowego + waga
+        # aktualnej krawędzi jest mniejsza od aktualnej wagi drogi dla w. końcowego
+        if distances[source] != float("Inf") and distances[source] + cost < distances[target]:
+            # 3.2. Powiadom że graf posiada cykl ujemny
+            print("Graph contains negative weight cycle")
+            return
+```
