@@ -97,3 +97,10 @@ def bellman_ford(src):
             print("Graph contains negative weight cycle")
             return
 ```
+
+---
+
+# Źródła
+
+- [Bellman–Ford algorithm - Wikipedia](https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm)
+- [Bellman Ford Algorithm - Favtutor](https://favtutor.com/blogs/bellman-ford-python)
