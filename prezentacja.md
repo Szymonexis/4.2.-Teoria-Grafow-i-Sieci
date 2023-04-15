@@ -23,9 +23,39 @@ Maciej Luciński, Szymon Kaszuba-Gałka
 
 ---
 
+# Twierdzenie (Poprawność algorytmu Bellmana-Forda)
+
+Niech **_G = (V, E)_** będzie ważonym grafem kierowanym ze źródłem **_s_** i funkcją wagową **_w: E &rarr; R_**. Załóżmy, że algorytm Bellmana-Forda został wykonany dla grafu **_G_**. Jeśli graf **_G_** nie ma cykli o ujemnych wagach osiągalnych ze źródła **_s_**, to algorytm zwraca wartość **_TRUE_**, **_d[v] = $\delta$(s, v)_** dla każdego wierzchołka **_$v \in V$_** i graf poprzedników, który jest drzewem najkrótszych ścieżek o korzeniu w **_s_**. Jeśli natomiast graf ma cykl o ujemnej wadze osiągalny z **_s_**, to algorytm zwraca **_FALSE_**.
+
+---
+
+# Algorytm Bellmana-Forda
+
+Służy do rozwiązywania problemu najkrótszych ścieżek z jednego źródła w grafie w którym wagi krawędzi mogą być ujemne.
+
+Korzysta z niego Routing Information Protocol (RIP) służący do obliczania najlepszej ścieżki do celu.
+
+---
+
+# Ujemne cykle
+
+Dla danego skierowanego grafu ważonego
+
+<center><b><i>G = (V, E)</i></b></center>
+
+Ze źródłem **_s_** i funkcją wagową
+
+<center><b><i>w: E &rarr; R</i></b></center>
+
+algorytm Bellmana-Forda zwróci wartość logiczną wskazującą czy istnieje cykl o ujemnej wadze osiągany ze źródła.
+
+Jeśli taki cykl istnieje, wówczas dla grafu **_G_** Nie można obliczyć najkrótszych ścieżek.
+
+---
+
 # Metoda relaksacji
 
-Algorytm Bellmana-Forda opiera sie na idei Metody Relaksacji czyli na sprawdzeniu czy przy przejściu daną krawędzią grafu nie otrzymamy ścieżki krótszej niż dotychczasowa ścieżka.
+Algorytm Bellmana-Forda opiera sie na idei Metody Relaksacji (podobnie jak algorytm Djikstry) czyli na sprawdzeniu czy przy przejściu daną krawędzią grafu nie otrzymamy ścieżki krótszej niż dotychczasowa ścieżka.
 
 Jeżeli tak to zmieniamy oszacowanie wagi najkrótszej ścieżki na aktualne oszacowanie.
 
@@ -52,12 +82,6 @@ Dla wartości $V$ oznaczającej zbiór wierzchołków oraz $E$ oznaczającej zbi
 
 - złożoność czasowa wynosi $O(|V| \cdot |E|)$
 - złożoność pamięciowa wynosi $O(|V|)$
-
----
-
-# Przykład
-
-@TODO
 
 ---
 
