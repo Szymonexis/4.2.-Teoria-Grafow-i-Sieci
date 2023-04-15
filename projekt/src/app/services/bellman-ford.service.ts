@@ -9,14 +9,12 @@ export class BellmanFordService {
     links: Link[]
   ): PresentationState[] {
     const distances: { [key: Node['id']]: number } = {};
-    const previous: { [key: Node['id']]: Node['id'] } = {};
 
     const presentationStates: PresentationState[] = [];
 
     // Set all distances to Infinity except for the source node
     nodes.forEach(({ id: nodeId }) => {
       distances[nodeId] = nodeId === sourceId ? 0 : Infinity;
-      previous[nodeId] = undefined;
     });
 
     // Relax edges repeatedly
@@ -35,7 +33,6 @@ export class BellmanFordService {
           const distanceToTarget = distances[sourceNodeId] + cost;
           if (distanceToTarget < distances[targetNodeId]) {
             distances[targetNodeId] = distanceToTarget;
-            previous[targetNodeId] = sourceNodeId;
           }
         }
       );

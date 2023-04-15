@@ -1,5 +1,5 @@
 .space {
-  $info-height: min(20rem, 33%);
+  $info-height: 20rem;
 
   height: 100%;
   width: 100%;
@@ -12,9 +12,9 @@
 
   &__info {
     display: flex;
-    justify-content: center;
     height: calc($info-height - 0.5rem);
     overflow-y: scroll;
+    user-select: none;
 
     $grid-border-color: black;
     $grid-border-width: 2px;

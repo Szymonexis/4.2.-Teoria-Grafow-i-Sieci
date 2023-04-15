@@ -17,6 +17,21 @@
   </button>
 
   <button
+    mat-raised-button
+    color="accent"
+    (click)="onAutoToggle()"
+    [disabled]="disableAuto"
+  >
+    Auto mode: {{ autoMode ? "ON" : "OFF" }}
+  </button>
+
+  Interval (in ms):
+  <input
+    class="toolbar__input"
+    [(ngModel)]="autoModeInterval"
+  />
+
+  <button
     mat-mini-fab
     color="accent"
     (click)="onPrevious()"

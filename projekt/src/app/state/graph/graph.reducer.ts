@@ -25,8 +25,14 @@ export const graphReducer = createReducer(
     actions.pickCurrentPresentationState,
     (state, { currentPresentationStateIndex: index }) => ({
       ...state,
-      currentPresentationState: { ...state.presentationStates[index] },
-      currentPresentationStateIndex: index,
+      currentPresentationState:
+        index < state.presentationStates.length && index >= 0
+          ? { ...state.presentationStates[index] }
+          : { ...state.currentPresentationState },
+      currentPresentationStateIndex:
+        index < state.presentationStates.length && index >= 0
+          ? index
+          : state.currentPresentationStateIndex,
     })
   ),
 
