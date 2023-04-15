@@ -40,21 +40,21 @@ export class SideMenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.createNodeForm = this.formBuilder.group({
-      nodeLabel: new FormControl(null, [Validators.required]),
+      nodeLabel: new FormControl(null),
     });
 
     this.deleteNodeForm = this.formBuilder.group({
-      node: new FormControl(null, [Validators.required]),
+      node: new FormControl(null),
     });
 
     this.createLinkForm = this.formBuilder.group({
-      source: new FormControl(null, [Validators.required]),
-      target: new FormControl(null, [Validators.required]),
-      cost: new FormControl(5, [Validators.required]),
+      source: new FormControl(null),
+      target: new FormControl(null),
+      cost: new FormControl(5),
     });
 
     this.deleteLinkForm = this.formBuilder.group({
-      link: new FormControl(null, [Validators.required]),
+      link: new FormControl(null),
     });
   }
 
@@ -81,8 +81,6 @@ export class SideMenuComponent implements OnInit {
       label: nodeLabel,
       data: { customColor: COLOR.UNSOLVED },
     });
-
-    this._formCleanupRoutine(this.createNodeForm);
   }
 
   onSubmitDeleteNode(deleteNodeForm: FormGroup): void {
@@ -93,8 +91,6 @@ export class SideMenuComponent implements OnInit {
     }
 
     this.graphFacade.deleteNode({ id: nodeToDelete.id });
-
-    this._formCleanupRoutine(this.deleteNodeForm);
   }
 
   onSubmitCreateLink(createLinkForm: FormGroup): void {
@@ -111,10 +107,6 @@ export class SideMenuComponent implements OnInit {
       target: targetNode.id,
       data: { customColor: COLOR.BLACK, cost: linkCost },
     });
-
-    this._formCleanupRoutine(this.createLinkForm, {
-      cost: 5,
-    });
   }
 
   onSubmitDeleteLink(deleteLinkForm: FormGroup): void {
@@ -125,18 +117,9 @@ export class SideMenuComponent implements OnInit {
     }
 
     this.graphFacade.deleteLink({ id: linkToDelete.id });
-
-    this._formCleanupRoutine(this.deleteLinkForm);
   }
 
   getNodeById(nodeId: Id, nodes: Node[]): Node {
     return nodes.find(({ id }) => id === nodeId);
-  }
-
-  private _formCleanupRoutine(formGroup: FormGroup, resetValues?: any): void {
-    formGroup.reset(resetValues);
-    formGroup.markAsPristine();
-    formGroup.markAsUntouched();
-    formGroup.updateValueAndValidity();
   }
 }

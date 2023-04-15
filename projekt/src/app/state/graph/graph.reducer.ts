@@ -21,6 +21,15 @@ export const graphReducer = createReducer(
     links,
   })),
 
+  on(
+    actions.pickCurrentPresentationState,
+    (state, { currentPresentationStateIndex: index }) => ({
+      ...state,
+      currentPresentationState: { ...state.presentationStates[index] },
+      currentPresentationStateIndex: index,
+    })
+  ),
+
   on(actions.setAlgoSourceNode, (state, { source }) => ({
     ...state,
     source,

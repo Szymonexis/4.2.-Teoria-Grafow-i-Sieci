@@ -3,15 +3,38 @@
   *ngIf="{
     source: source$ | async,
     nodes: nodes$ | async,
-    links: links$ | async
+    links: links$ | async,
+    presentationStatesWithIndex: presentationStatesWithIndex$ | async
   } as viewData"
 >
   <button
     mat-raised-button
     color="accent"
     (click)="onGenerate()"
-    [disabled]="!viewData?.source || !viewData?.nodes || !viewData?.links"
+    [disabled]="disableControls"
   >
     Generate
   </button>
+
+  <button
+    mat-mini-fab
+    color="accent"
+    (click)="onPrevious()"
+    [disabled]="disablePrevious"
+  >
+    <mat-icon> keyboard_arrow_left </mat-icon>
+  </button>
+  <button
+    mat-mini-fab
+    color="accent"
+    (click)="onNext()"
+    [disabled]="disableNext"
+  >
+    <mat-icon> keyboard_arrow_right </mat-icon>
+  </button>
+
+  <div class="toolbar__counter" *ngIf="!disableCounter">
+    {{ viewData?.presentationStatesWithIndex?.index + 1 }} /
+    {{ viewData?.presentationStatesWithIndex?.states?.length }}
+  </div>
 </mat-toolbar>

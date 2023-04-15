@@ -65,7 +65,7 @@
   </div>
 
   <div class="space__info">
-    <div class="space__info__table" *ngIf="!!viewData?.currentState || true">
+    <div class="space__info__table" *ngIf="!!viewData?.currentState">
       <span class="space__info__table__left space__info__table__left--header">
         Node label
       </span>
@@ -73,10 +73,52 @@
         Cost
       </span>
 
-      <ng-container *ngFor="">
-        <span class="space__info__table__left"></span>
-        <span class="space__info__table__right"></span>
+      <ng-container
+        *ngFor="let item of viewData?.currentState?.matrix | keyvalue"
+      >
+        <span class="space__info__table__left">
+          {{ item.key }}
+        </span>
+        <span class="space__info__table__right">
+          {{ item.value }}
+        </span>
       </ng-container>
+    </div>
+
+    <div
+      class="space__info__state"
+      *ngIf="viewData?.currentState?.source && viewData?.currentState?.target"
+    >
+      Currently selected nodes:
+      <ul
+        *ngIf="{
+          source: viewData?.currentState?.source,
+          target: viewData?.currentState?.target,
+          link: currentLink
+        } as state"
+      >
+        <li>
+          Link:
+          <ul>
+            <li>Id: {{ state.link.id }}</li>
+            <li>Cost: {{ state.link.data.cost }}</li>
+          </ul>
+        </li>
+        <li>
+          Source:
+          <ul>
+            <li>Id: {{ state.source.id }}</li>
+            <li>Label: {{ state.source.label }}</li>
+          </ul>
+        </li>
+        <li>
+          Target:
+          <ul>
+            <li>Id: {{ state.target.id }}</li>
+            <li>Label: {{ state.target.label }}</li>
+          </ul>
+        </li>
+      </ul>
     </div>
   </div>
 </div>

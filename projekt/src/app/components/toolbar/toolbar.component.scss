@@ -1,4 +1,8 @@
 .toolbar {
   gap: 1rem;
   width: 100%;
+
+  &__counter {
+    color: white;
+  }
 }
