@@ -17,6 +17,7 @@ import { GraphSpaceComponent } from './components/graph-space/graph-space.compon
 import { SideMenuComponent } from './components/side-menu/side-menu.component';
 
 import { facades, reducers } from './state';
+import { BellmanFordService } from './services/bellman-ford.service';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,7 @@ import { facades, reducers } from './state';
     MaterialModule,
     NgxGraphModule,
   ],
-  providers: [...facades],
+  providers: [...facades, BellmanFordService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,37 +1,17 @@
 <mat-toolbar
-  *ngIf="{
-    visualizationState: visualizationState$ | async
-  } as viewData"
   class="toolbar"
+  *ngIf="{
+    source: source$ | async,
+    nodes: nodes$ | async,
+    links: links$ | async
+  } as viewData"
 >
-  <div class="toolbar--state">
-    <p>State:</p>
-
-    <ng-container [ngSwitch]="viewData?.visualizationState">
-      <mat-icon *ngSwitchCase="VIZUALIZATION_STATE.START">
-        play_circle_filled
-      </mat-icon>
-      <mat-icon *ngSwitchCase="VIZUALIZATION_STATE.STOP">
-        stop_circle_filled
-      </mat-icon>
-      <mat-icon *ngSwitchCase="VIZUALIZATION_STATE.PAUSE">
-        pause_circle_filled
-      </mat-icon>
-    </ng-container>
-  </div>
-  <div class="toolbar--start-stop">
-    <button
-      mat-raised-button
-      [color]="isStarted ? 'warn' : 'accent'"
-      (click)="onStartStop()"
-    >
-      {{ isStarted ? "Stop" : "Start" }}
-    </button>
-  </div>
-
-  <div class="toolbar--pause">
-    <button mat-raised-button [disabled]="!isStarted" (click)="onPause()">
-      Pause
-    </button>
-  </div>
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="onGenerate()"
+    [disabled]="!viewData?.source || !viewData?.nodes || !viewData?.links"
+  >
+    Generate
+  </button>
 </mat-toolbar>

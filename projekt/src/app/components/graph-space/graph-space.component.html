@@ -1,67 +1,82 @@
 <div
   class="space"
   *ngIf="{
-    links: links | cloneDeep,
-    nodes: nodes | cloneDeep
+    links: links$ | async | cloneDeep,
+    nodes: nodes$ | async | cloneDeep,
+    currentState: currentState$ | async
   } as viewData"
 >
-  <ngx-graph
-    class="space__chart-container"
-    [links]="viewData?.links"
-    [nodes]="viewData?.nodes"
-  >
-    <ng-template #nodeTemplate let-node>
-      <svg:g class="node">
-        <svg:rect
-          [attr.width]="node.dimension.width"
-          [attr.height]="node.dimension.height"
-          [attr.fill]="node.data.customColor"
-        />
-        <svg:text
-          alignment-baseline="central"
-          [attr.x]="10"
-          [attr.y]="node.dimension.height / 2"
-        >
-          {{ node.label }}
-        </svg:text>
-      </svg:g>
-    </ng-template>
-
-    <ng-template #defsTemplate>
-      <svg:marker
-        id="arrow"
-        viewBox="0 -5 10 10"
-        refX="8"
-        refY="0"
-        markerWidth="4"
-        markerHeight="4"
-        orient="auto"
-      >
-        <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
-      </svg:marker>
-    </ng-template>
-
-    <ng-template #linkTemplate let-link>
-      <svg:g class="edge">
-        <svg:path
-          class="line"
-          stroke-width="2"
-          marker-end="url(#arrow)"
-          [attr.stroke]="link.data.customColor"
-        ></svg:path>
-        <svg:text class="edge-label" text-anchor="middle">
-          <textPath
-            class="text-path"
-            [attr.href]="'#' + link.id"
-            [style.dominant-baseline]="link.dominantBaseline"
-            startOffset="50%"
-            font-size="20"
-            font-weight="500"
+  <div class="space__graph">
+    <ngx-graph [links]="viewData?.links" [nodes]="viewData?.nodes">
+      <ng-template #nodeTemplate let-node>
+        <svg:g class="node">
+          <svg:rect
+            [attr.width]="node.dimension.width"
+            [attr.height]="node.dimension.height"
+            [attr.fill]="node.data.customColor"
+          />
+          <svg:text
+            alignment-baseline="central"
+            [attr.x]="10"
+            [attr.y]="node.dimension.height / 2"
           >
-            {{ link.data.cost | cost }}
-          </textPath>
-        </svg:text>
-      </svg:g>
-    </ng-template>
-  </ngx-graph>
+            {{ node.label }}
+          </svg:text>
+        </svg:g>
+      </ng-template>
+
+      <ng-template #defsTemplate>
+        <svg:marker
+          id="arrow"
+          viewBox="0 -5 10 10"
+          refX="8"
+          refY="0"
+          markerWidth="4"
+          markerHeight="4"
+          orient="auto"
+        >
+          <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
+        </svg:marker>
+      </ng-template>
+
+      <ng-template #linkTemplate let-link>
+        <svg:g class="edge">
+          <svg:path
+            class="line"
+            stroke-width="2"
+            marker-end="url(#arrow)"
+            [attr.stroke]="link.data.customColor"
+          ></svg:path>
+          <svg:text class="edge-label" text-anchor="middle">
+            <textPath
+              class="text-path"
+              [attr.href]="'#' + link.id"
+              [style.dominant-baseline]="link.dominantBaseline"
+              startOffset="50%"
+              font-size="20"
+              font-weight="500"
+            >
+              {{ link.data.cost | cost }}
+            </textPath>
+          </svg:text>
+        </svg:g>
+      </ng-template>
+    </ngx-graph>
+  </div>
+
+  <div class="space__info">
+    <div class="space__info__table" *ngIf="!!viewData?.currentState || true">
+      <span class="space__info__table__left space__info__table__left--header">
+        Node label
+      </span>
+      <span class="space__info__table__right space__info__table__right--header">
+        Cost
+      </span>
+
+      <ng-container *ngFor="">
+        <span class="space__info__table__left"></span>
+        <span class="space__info__table__right"></span>
+      </ng-container>
+    </div>
+  </div>
 </div>

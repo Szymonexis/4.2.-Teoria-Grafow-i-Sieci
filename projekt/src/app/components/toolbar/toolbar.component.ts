@@ -3,15 +3,11 @@ import {
   OnDestroyMixin,
   untilComponentDestroyed,
 } from '@w11k/ngx-componentdestroyed';
-import { delay } from 'lodash';
-import { combineLatest, interval, subscribeOn, takeUntil } from 'rxjs';
+import { combineLatest } from 'rxjs';
 
 import { BellmanFordService } from 'src/app/services/bellman-ford.service';
-import { SimulationFacade } from 'src/app/state/simulation/simulation.facade';
-import {
-  SimulationStep,
-  VIZUALIZATION_STATE,
-} from 'src/app/state/simulation/simulation.model';
+import { GraphFacade } from 'src/app/state/graph/graph.facade';
+import { Link, Node } from 'src/app/state/graph/graph.model';
 
 @Component({
   selector: 'app-toolbar',
@@ -19,95 +15,38 @@ import {
   styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent extends OnDestroyMixin implements OnInit {
-  visualizationState$ = this.simulationFacade.vizualizationState$;
-  simulationData$ = this.simulationFacade.simulationData$;
-  simulationSteps$ = this.simulationFacade.simulationSteps$;
+  source$ = this.graphFacade.source$;
+  nodes$ = this.graphFacade.nodes$;
+  links$ = this.graphFacade.links$;
 
-  VIZUALIZATION_STATE = VIZUALIZATION_STATE;
-  isStarted = false;
-  isStopped = true;
-  isPaused = false;
-
-  private _simulationStepIndex = 0;
-  private _simulationSteps: SimulationStep[] = [];
+  private source: Node;
+  private nodes: Node[];
+  private links: Link[];
 
   constructor(
-    private simulationFacade: SimulationFacade,
-    private bellmanFordService: BellmanFordService
+    private bellmanFordService: BellmanFordService,
+    private graphFacade: GraphFacade
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.visualizationState$
+    combineLatest([this.source$, this.nodes$, this.links$])
       .pipe(untilComponentDestroyed(this))
-      .subscribe((visualizationState) => {
-        this.isStarted = visualizationState === VIZUALIZATION_STATE.START;
-        this.isPaused = visualizationState === VIZUALIZATION_STATE.PAUSE;
-        this.isStopped = visualizationState === VIZUALIZATION_STATE.STOP;
-
-        if (this.isStarted) {
-          this.bellmanFordService.init();
-          this.bellmanFordService.compute();
-        }
-
-        if (this.isStopped) {
-          this.bellmanFordService.reset();
-        }
-      });
-
-    this.simulationSteps$
-      .pipe(untilComponentDestroyed(this))
-      .subscribe((simulationSteps) => {
-        this._simulationSteps = simulationSteps;
-      });
-
-    // @TODO: add reaction to start and stop,
-    // add interval setting, investigate very wrong steps
-    interval(1000)
-      .pipe(untilComponentDestroyed(this))
-      .subscribe(() => {
-        if (!this.isStarted || this.isPaused) {
-          return;
-        }
-
-        this.simulationFacade.showNextSimulationStep(
-          this._simulationSteps[this._simulationStepIndex]
-        );
-
-        this._simulationStepIndex += 1;
-
-        if (this._simulationStepIndex >= this._simulationSteps.length) {
-          this.simulationFacade.setVizualizationState({
-            vizualizationState: VIZUALIZATION_STATE.STOP,
-          });
-        }
+      .subscribe(([source, nodes, links]) => {
+        this.source = source;
+        this.nodes = nodes;
+        this.links = links;
       });
   }
 
-  onStartStop(): void {
-    if (this.isStarted) {
-      this.simulationFacade.setVizualizationState({
-        vizualizationState: VIZUALIZATION_STATE.STOP,
-      });
+  onGenerate(): void {
+    const presentationStates = this.bellmanFordService.compute(
+      this.source.id,
+      this.nodes,
+      this.links
+    );
 
-      this._simulationStepIndex = 0;
-
-      return;
-    }
-
-    this.simulationFacade.setVizualizationState({
-      vizualizationState: VIZUALIZATION_STATE.START,
-    });
-  }
-
-  onPause(): void {
-    if (!this.isStarted) {
-      return;
-    }
-
-    this.simulationFacade.setVizualizationState({
-      vizualizationState: VIZUALIZATION_STATE.PAUSE,
-    });
+    this.graphFacade.setPresentationStates({ presentationStates });
   }
 }

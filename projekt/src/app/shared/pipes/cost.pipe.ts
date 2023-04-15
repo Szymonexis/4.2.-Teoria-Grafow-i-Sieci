@@ -11,7 +11,7 @@ export class CostPipe implements PipeTransform {
       case 42:
         return `${value} - meaning of life`;
       case Number.POSITIVE_INFINITY:
-        return '∞';
+        return 'INF';
       default:
         return value;
     }

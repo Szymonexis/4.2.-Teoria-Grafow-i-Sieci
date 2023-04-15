@@ -8,6 +8,13 @@ const generateRandomColor = (): COLOR =>
 
 export const graphReducer = createReducer(
   initialState,
+  on(actions.setPresentationStates, (state, { presentationStates }) => ({
+    ...state,
+    presentationStates: [...presentationStates],
+    currentPresentationState: presentationStates[0],
+    currentPresentationStateIndex: 0,
+  })),
+
   on(actions.setNodesAndLinksTemplate, (state, { nodes, links }) => ({
     ...state,
     nodes,

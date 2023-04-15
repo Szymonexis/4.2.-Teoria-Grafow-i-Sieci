@@ -2,17 +2,29 @@ import { createAction, props } from '@ngrx/store';
 import {
   CreateLinkPayload,
   CreateNodePayload,
+  CurrentPresentationStateIndexPayload,
   DeleteLinkPayload,
   DeleteNodePayload,
   EditLinkPayload,
   EditNodePayload,
   NodePayload,
   NodesAndLinksTemplatePayload,
+  PresentationStatesPayload,
 } from './graph.model';
 
 export const setNodesAndLinksTemplate = createAction(
   '[Graph] Set nodes and links template',
   props<NodesAndLinksTemplatePayload>()
+);
+
+export const pickCurrentPresentationState = createAction(
+  '[Graph] Pick current presentation state',
+  props<CurrentPresentationStateIndexPayload>()
+);
+
+export const setPresentationStates = createAction(
+  '[Graph] Set algo output presentation states',
+  props<PresentationStatesPayload>()
 );
 
 export const setAlgoSourceNode = createAction(
