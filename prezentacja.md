@@ -25,7 +25,12 @@ Maciej Luciński, Szymon Kaszuba-Gałka
 
 # Twierdzenie (Poprawność algorytmu Bellmana-Forda)
 
-Niech **_G = (V, E)_** będzie ważonym grafem kierowanym ze źródłem **_s_** i funkcją wagową **_w: E &rarr; R_**. Załóżmy, że algorytm Bellmana-Forda został wykonany dla grafu **_G_**. Jeśli graf **_G_** nie ma cykli o ujemnych wagach osiągalnych ze źródła **_s_**, to algorytm zwraca wartość **_TRUE_**, **_d[v] = $\delta$(s, v)_** dla każdego wierzchołka **_$v \in V$_** i graf poprzedników, który jest drzewem najkrótszych ścieżek o korzeniu w **_s_**. Jeśli natomiast graf ma cykl o ujemnej wadze osiągalny z **_s_**, to algorytm zwraca **_FALSE_**.
+Niech $G=(V,E)$ będzie ważonym grafem kierowanym ze źródłem $s$ i funkcją wagową $w: E \rightarrow R$. 
+
+Załóżmy, że algorytm Bellmana-Forda został wykonany dla grafu $G$. 
+
+Jeśli graf $G$ nie ma cykli o ujemnych wagach osiągalnych ze źródła $s$, to algorytm zwraca wartość **_TRUE_**, $d[v] = \delta(s, v)$ dla każdego wierzchołka
+$v \in V$ i graf poprzedników, który jest drzewem najkrótszych ścieżek o korzeniu w $s$. Jeśli natomiast graf ma cykl o ujemnej wadze osiągalny z $s$, to algorytm zwraca **_FALSE_**.
 
 ---
 
@@ -41,15 +46,19 @@ Korzysta z niego Routing Information Protocol (RIP) służący do obliczania naj
 
 Dla danego skierowanego grafu ważonego
 
-<center><b><i>G = (V, E)</i></b></center>
+$$
+G = (V, E)
+$$
 
-Ze źródłem **_s_** i funkcją wagową
+Ze źródłem $s$ i funkcją wagową
 
-<center><b><i>w: E &rarr; R</i></b></center>
+$$
+w: E \rightarrow R
+$$
 
 algorytm Bellmana-Forda zwróci wartość logiczną wskazującą czy istnieje cykl o ujemnej wadze osiągany ze źródła.
 
-Jeśli taki cykl istnieje, wówczas dla grafu **_G_** Nie można obliczyć najkrótszych ścieżek.
+Jeśli taki cykl istnieje, wówczas dla grafu $G$ Nie można obliczyć najkrótszych ścieżek.
 
 ---
 
