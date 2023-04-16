@@ -2,19 +2,32 @@ import { createSelector } from '@ngrx/store';
 import { AppState } from '..';
 import { GraphState } from './graph.model';
 
-const selectSimulationState = (state: AppState): GraphState => state.graph;
+const selectGraphState = (state: AppState): GraphState => state.graph;
+
+export const selectCurrentPresentationState = createSelector(
+  selectGraphState,
+  (state: GraphState) => state.currentPresentationState
+);
+
+export const selectPresentationStatesWithCurrentIndex = createSelector(
+  selectGraphState,
+  (state: GraphState) => ({
+    index: state.currentPresentationStateIndex,
+    states: state.presentationStates,
+  })
+);
 
 export const selectNodes = createSelector(
-  selectSimulationState,
+  selectGraphState,
   (state: GraphState) => state.nodes
 );
 
 export const selectLinks = createSelector(
-  selectSimulationState,
+  selectGraphState,
   (state: GraphState) => state.links
 );
 
 export const selectSource = createSelector(
-  selectSimulationState,
+  selectGraphState,
   (state: GraphState) => state.source
 );

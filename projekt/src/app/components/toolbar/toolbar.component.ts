@@ -1,17 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import {
   OnDestroyMixin,
   untilComponentDestroyed,
 } from '@w11k/ngx-componentdestroyed';
-import { delay } from 'lodash';
-import { combineLatest, interval, subscribeOn, takeUntil } from 'rxjs';
+import { Subscription, combineLatest, timer } from 'rxjs';
 
 import { BellmanFordService } from 'src/app/services/bellman-ford.service';
-import { SimulationFacade } from 'src/app/state/simulation/simulation.facade';
-import {
-  SimulationStep,
-  VIZUALIZATION_STATE,
-} from 'src/app/state/simulation/simulation.model';
+import { GraphFacade } from 'src/app/state/graph/graph.facade';
+import { Link, Node, PresentationState } from 'src/app/state/graph/graph.model';
+import { DialogComponent } from '../dialog/dialog.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -19,95 +17,115 @@ import {
   styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent extends OnDestroyMixin implements OnInit {
-  visualizationState$ = this.simulationFacade.vizualizationState$;
-  simulationData$ = this.simulationFacade.simulationData$;
-  simulationSteps$ = this.simulationFacade.simulationSteps$;
+  source$ = this.graphFacade.source$;
+  nodes$ = this.graphFacade.nodes$;
+  links$ = this.graphFacade.links$;
+  presentationStatesWithIndex$ =
+    this.graphFacade.presentationStatesWithCurrentIndex$;
 
-  VIZUALIZATION_STATE = VIZUALIZATION_STATE;
-  isStarted = false;
-  isStopped = true;
-  isPaused = false;
+  autoMode = false;
+  autoModeInterval = 1000;
+  private autoSubscription: Subscription;
 
-  private _simulationStepIndex = 0;
-  private _simulationSteps: SimulationStep[] = [];
+  private source: Node;
+  private nodes: Node[];
+  private links: Link[];
+  private index: number;
+  private states: PresentationState[];
+
+  get disableControls(): boolean {
+    return !this.source || !this.nodes || !this.links;
+  }
+
+  get disableCounter(): boolean {
+    return this.index === null || !this.states;
+  }
+
+  get disableAuto(): boolean {
+    return this.disableControls || this.disableCounter;
+  }
+
+  get disablePrevious(): boolean {
+    return this.disableControls || this.disableCounter || this.index === 0;
+  }
+
+  get disableNext(): boolean {
+    return (
+      this.disableControls ||
+      this.disableCounter ||
+      this.index + 1 === this.states?.length
+    );
+  }
 
   constructor(
-    private simulationFacade: SimulationFacade,
-    private bellmanFordService: BellmanFordService
+    private bellmanFordService: BellmanFordService,
+    private graphFacade: GraphFacade,
+    public dialog: MatDialog
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.visualizationState$
+    combineLatest([
+      this.source$,
+      this.nodes$,
+      this.links$,
+      this.presentationStatesWithIndex$,
+    ])
       .pipe(untilComponentDestroyed(this))
-      .subscribe((visualizationState) => {
-        this.isStarted = visualizationState === VIZUALIZATION_STATE.START;
-        this.isPaused = visualizationState === VIZUALIZATION_STATE.PAUSE;
-        this.isStopped = visualizationState === VIZUALIZATION_STATE.STOP;
-
-        if (this.isStarted) {
-          this.bellmanFordService.init();
-          this.bellmanFordService.compute();
-        }
-
-        if (this.isStopped) {
-          this.bellmanFordService.reset();
-        }
-      });
-
-    this.simulationSteps$
-      .pipe(untilComponentDestroyed(this))
-      .subscribe((simulationSteps) => {
-        this._simulationSteps = simulationSteps;
-      });
-
-    // @TODO: add reaction to start and stop,
-    // add interval setting, investigate very wrong steps
-    interval(1000)
-      .pipe(untilComponentDestroyed(this))
-      .subscribe(() => {
-        if (!this.isStarted || this.isPaused) {
-          return;
-        }
-
-        this.simulationFacade.showNextSimulationStep(
-          this._simulationSteps[this._simulationStepIndex]
-        );
-
-        this._simulationStepIndex += 1;
-
-        if (this._simulationStepIndex >= this._simulationSteps.length) {
-          this.simulationFacade.setVizualizationState({
-            vizualizationState: VIZUALIZATION_STATE.STOP,
-          });
-        }
+      .subscribe(([source, nodes, links, { index, states }]) => {
+        this.source = source;
+        this.nodes = nodes;
+        this.links = links;
+        this.index = index;
+        this.states = states;
       });
   }
 
-  onStartStop(): void {
-    if (this.isStarted) {
-      this.simulationFacade.setVizualizationState({
-        vizualizationState: VIZUALIZATION_STATE.STOP,
+  onGenerate(): void {
+    try {
+      const presentationStates = this.bellmanFordService.compute(
+        this.source.id,
+        this.nodes,
+        this.links
+      );
+
+      this.graphFacade.setPresentationStates({ presentationStates });
+    } catch (error) {
+      this.dialog.open(DialogComponent, {
+        data: error,
+        width: '25rem',
       });
-
-      this._simulationStepIndex = 0;
-
-      return;
     }
+  }
 
-    this.simulationFacade.setVizualizationState({
-      vizualizationState: VIZUALIZATION_STATE.START,
+  onPrevious(): void {
+    this.graphFacade.pickCurrentPresentationState({
+      currentPresentationStateIndex: this.index - 1,
     });
   }
 
-  onPause(): void {
-    if (!this.isStarted) {
+  onNext(): void {
+    this.graphFacade.pickCurrentPresentationState({
+      currentPresentationStateIndex: this.index + 1,
+    });
+  }
+
+  onAutoToggle(): void {
+    if (!this.autoMode) {
+      this.autoSubscription = timer(0, this.autoModeInterval)
+        .pipe(untilComponentDestroyed(this))
+        .subscribe(() => {
+          this.onNext();
+        });
+
+      this.autoMode = true;
       return;
     }
 
-    this.simulationFacade.setVizualizationState({
-      vizualizationState: VIZUALIZATION_STATE.PAUSE,
-    });
+    if (this.autoMode) {
+      this.autoSubscription.unsubscribe();
+      this.autoMode = false;
+    }
   }
 }

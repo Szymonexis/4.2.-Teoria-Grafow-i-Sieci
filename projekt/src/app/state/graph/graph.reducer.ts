@@ -8,11 +8,33 @@ const generateRandomColor = (): COLOR =>
 
 export const graphReducer = createReducer(
   initialState,
+  on(actions.setPresentationStates, (state, { presentationStates }) => ({
+    ...state,
+    presentationStates: [...presentationStates],
+    currentPresentationState: presentationStates[0],
+    currentPresentationStateIndex: 0,
+  })),
+
   on(actions.setNodesAndLinksTemplate, (state, { nodes, links }) => ({
     ...state,
     nodes,
     links,
   })),
+
+  on(
+    actions.pickCurrentPresentationState,
+    (state, { currentPresentationStateIndex: index }) => ({
+      ...state,
+      currentPresentationState:
+        index < state.presentationStates.length && index >= 0
+          ? { ...state.presentationStates[index] }
+          : { ...state.currentPresentationState },
+      currentPresentationStateIndex:
+        index < state.presentationStates.length && index >= 0
+          ? index
+          : state.currentPresentationStateIndex,
+    })
+  ),
 
   on(actions.setAlgoSourceNode, (state, { source }) => ({
     ...state,

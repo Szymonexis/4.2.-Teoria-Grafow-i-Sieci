@@ -2,12 +2,14 @@ import { select, Store } from '@ngrx/store';
 import {
   CreateLinkPayload,
   CreateNodePayload,
+  CurrentPresentationStateIndexPayload,
   DeleteLinkPayload,
   DeleteNodePayload,
   EditLinkPayload,
   EditNodePayload,
   NodePayload,
   NodesAndLinksTemplatePayload,
+  PresentationStatesPayload,
 } from './graph.model';
 import { AppState } from '..';
 
@@ -20,8 +22,24 @@ export class GraphFacade {
   nodes$ = this.store.pipe(select(selectors.selectNodes));
   links$ = this.store.pipe(select(selectors.selectLinks));
   source$ = this.store.pipe(select(selectors.selectSource));
+  currentPresentationState$ = this.store.pipe(
+    select(selectors.selectCurrentPresentationState)
+  );
+  presentationStatesWithCurrentIndex$ = this.store.pipe(
+    select(selectors.selectPresentationStatesWithCurrentIndex)
+  );
 
   constructor(private store: Store<AppState>) {}
+
+  pickCurrentPresentationState(
+    payload: CurrentPresentationStateIndexPayload
+  ): void {
+    this.store.dispatch(actions.pickCurrentPresentationState(payload));
+  }
+
+  setPresentationStates(payload: PresentationStatesPayload): void {
+    this.store.dispatch(actions.setPresentationStates(payload));
+  }
 
   setNodesAndLinksTemplate(payload: NodesAndLinksTemplatePayload): void {
     this.store.dispatch(actions.setNodesAndLinksTemplate(payload));

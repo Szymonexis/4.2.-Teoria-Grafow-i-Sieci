@@ -5,8 +5,8 @@ export type Id = string;
 const uid = new ShortUniqueId({ length: 10, dictionary: 'alpha' });
 
 export enum COLOR {
-  CURRENT = '#e9c46a',
-  SOLVED = '#2a9d8f',
+  CURRENT_NODE = '#e9c46a',
+  CURRENT_LINK = '#2a9d8f',
   UNSOLVED = '#e76f51',
   BLACK = '#000000',
 }
@@ -19,12 +19,12 @@ export interface LinkData extends Data {
   cost: number;
 }
 
-export interface NodeData extends Data {}
+export type NodeData = Data;
 
 export interface Link {
   id: Id;
-  source: Id;
-  target: Id;
+  source: Node['id'];
+  target: Node['id'];
   data: LinkData;
 }
 
@@ -34,15 +34,31 @@ export interface Node {
   data: NodeData;
 }
 
+export interface Matrix {
+  [key: Node['label']]: number;
+}
+
+export interface PresentationState {
+  source: Node;
+  target: Node;
+  matrix: Matrix;
+}
+
 export interface GraphState {
   nodes: Node[];
   links: Link[];
+  presentationStates: PresentationState[];
+  currentPresentationState: PresentationState;
+  currentPresentationStateIndex: number;
   source: Node;
 }
 
 export const initialState: GraphState = {
   nodes: [],
   links: [],
+  presentationStates: null,
+  currentPresentationState: null,
+  currentPresentationStateIndex: null,
   source: null,
 };
 
@@ -62,9 +78,16 @@ export type EditLinkPayload = Link;
 
 export type DeleteLinkPayload = Pick<Link, 'id'>;
 
-export type NodesAndLinksTemplatePayload = Omit<GraphState, 'source'>;
+export type NodesAndLinksTemplate = Pick<GraphState, 'nodes' | 'links'>;
 
-export type NodesAndLinksTemplate = Omit<GraphState, 'source'>;
+export type NodesAndLinksTemplatePayload = NodesAndLinksTemplate;
+
+export type PresentationStatesPayload = Pick<GraphState, 'presentationStates'>;
+
+export type CurrentPresentationStateIndexPayload = Pick<
+  GraphState,
+  'currentPresentationStateIndex'
+>;
 
 export interface NodesAndLinksTemplates {
   [key: string]: NodesAndLinksTemplate;
