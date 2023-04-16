@@ -3,7 +3,7 @@ import {
   OnDestroyMixin,
   untilComponentDestroyed,
 } from '@w11k/ngx-componentdestroyed';
-import { Observable, combineLatest, filter, map } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, filter, map } from 'rxjs';
 import { GraphFacade } from 'src/app/state/graph/graph.facade';
 import { COLOR, Link, Node } from 'src/app/state/graph/graph.model';
 
@@ -14,13 +14,22 @@ import { COLOR, Link, Node } from 'src/app/state/graph/graph.model';
 })
 export class GraphSpaceComponent extends OnDestroyMixin implements OnInit {
   currentState$ = this.graphFacade.currentPresentationState$;
+  currentLink$ = new BehaviorSubject(null);
+  Infinity = Infinity;
 
-  links$ = this.graphFacade.links$;
+  _links$ = this.graphFacade.links$;
+  links$ = this._getLinks();
 
   _nodes$ = this.graphFacade.nodes$;
   nodes$ = this._getNodes();
 
-  currentLink: Link = null;
+  get linkBackgroundColor(): string {
+    return COLOR.CURRENT_LINK;
+  }
+
+  get nodeBackgroundColor(): string {
+    return COLOR.CURRENT_NODE;
+  }
 
   constructor(private graphFacade: GraphFacade) {
     super();
@@ -40,11 +49,36 @@ export class GraphSpaceComponent extends OnDestroyMixin implements OnInit {
             target: { id: targetId },
           },
         ]) => {
-          this.currentLink = links.find(
-            ({ target, source }) => target === targetId && source === sourceId
+          this.currentLink$.next(
+            links.find(
+              ({ target, source }) => target === targetId && source === sourceId
+            )
           );
         }
       );
+  }
+
+  private _getLinks(): Observable<Link[]> {
+    return combineLatest([this._links$, this.currentLink$]).pipe(
+      untilComponentDestroyed(this),
+      map(([links, currentLink]) => {
+        if (!currentLink) {
+          return links;
+        }
+
+        return links.map(({ id, ...link }) => ({
+          ...link,
+          id,
+          data: {
+            ...link.data,
+            customColor:
+              id === currentLink.id
+                ? COLOR.CURRENT_LINK
+                : link.data.customColor,
+          },
+        }));
+      })
+    );
   }
 
   private _getNodes(): Observable<Node[]> {
@@ -65,7 +99,7 @@ export class GraphSpaceComponent extends OnDestroyMixin implements OnInit {
           data: {
             customColor:
               node.id === targetId || node.id === sourceId
-                ? COLOR.CURRENT
+                ? COLOR.CURRENT_NODE
                 : node.data.customColor,
           },
         }));

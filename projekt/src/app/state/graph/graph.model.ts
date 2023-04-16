@@ -5,8 +5,8 @@ export type Id = string;
 const uid = new ShortUniqueId({ length: 10, dictionary: 'alpha' });
 
 export enum COLOR {
-  CURRENT = '#e9c46a',
-  SOLVED = '#2a9d8f',
+  CURRENT_NODE = '#e9c46a',
+  CURRENT_LINK = '#2a9d8f',
   UNSOLVED = '#e76f51',
   BLACK = '#000000',
 }

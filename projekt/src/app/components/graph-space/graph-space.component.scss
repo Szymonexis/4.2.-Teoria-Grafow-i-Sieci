@@ -53,6 +53,12 @@
     &__state {
       padding: 0.5rem;
       font-weight: 500;
+
+      &__element {
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
     }
   }
 }
