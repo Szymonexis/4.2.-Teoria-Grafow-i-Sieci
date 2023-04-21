@@ -25,9 +25,9 @@ Maciej Luciński, Szymon Kaszuba-Gałka
 
 # Twierdzenie (Poprawność algorytmu Bellmana-Forda)
 
-Niech $G=(V,E)$ będzie ważonym grafem kierowanym ze źródłem $s$ i funkcją wagową $w: E \rightarrow R$. 
+Niech $G=(V,E)$ będzie ważonym grafem kierowanym ze źródłem $s$ i funkcją wagową $w: E \rightarrow R$.
 
-Załóżmy, że algorytm Bellmana-Forda został wykonany dla grafu $G$. 
+Załóżmy, że algorytm Bellmana-Forda został wykonany dla grafu $G$.
 
 Jeśli graf $G$ nie ma cykli o ujemnych wagach osiągalnych ze źródła $s$, to algorytm zwraca wartość **_TRUE_**, $d[v] = \delta(s, v)$ dla każdego wierzchołka
 $v \in V$ i graf poprzedników, który jest drzewem najkrótszych ścieżek o korzeniu w $s$. Jeśli natomiast graf ma cykl o ujemnej wadze osiągalny z $s$, to algorytm zwraca **_FALSE_**.
@@ -137,3 +137,4 @@ def bellman_ford(src):
 
 - [Bellman–Ford algorithm - Wikipedia](https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm)
 - [Bellman Ford Algorithm - Favtutor](https://favtutor.com/blogs/bellman-ford-python)
+- Cormen - wprowadzenie do algorytmów
