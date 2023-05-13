@@ -129,6 +129,49 @@ const _generateLinks = (connections: {
 
 export const nodesAndLinksTemplates: NodesAndLinksTemplates = {
   'Template 1': {
+    nodes: _generateNodes(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']),
+    links: _generateLinks({
+      A: [
+        { target: 'B', cost: 100 },
+        { target: 'C', cost: 2 },
+      ],
+      B: [{ target: 'C', cost: 200 }],
+      C: [
+        { target: 'D', cost: 300 },
+        { target: 'E', cost: 1 },
+        { target: 'F', cost: 100 },
+      ],
+      D: [
+        { target: 'E', cost: 400 },
+        { target: 'F', cost: 7 },
+      ],
+      E: [
+        { target: 'B', cost: 3 },
+        { target: 'F', cost: 500 },
+      ],
+      F: [
+        { target: 'G', cost: 600 },
+        { target: 'H', cost: 4 },
+      ],
+      G: [
+        { target: 'D', cost: 50 },
+        { target: 'H', cost: 700 },
+        { target: 'J', cost: 1000 },
+      ],
+      H: [{ target: 'I', cost: 10 }],
+      I: [
+        { target: 'F', cost: 3 },
+        { target: 'J', cost: 20 },
+      ],
+      J: [
+        { target: 'B', cost: 1000 },
+        { target: 'D', cost: 500 },
+        { target: 'F', cost: 500 },
+        { target: 'H', cost: 300 },
+      ],
+    }),
+  },
+  'Template 2': {
     nodes: _generateNodes(['A', 'B', 'C', 'D', 'E']),
     links: _generateLinks({
       A: [
@@ -143,7 +186,7 @@ export const nodesAndLinksTemplates: NodesAndLinksTemplates = {
       E: [{ target: 'D', cost: -5 }],
     }),
   },
-  'Template 2': {
+  'Template 3': {
     nodes: _generateNodes(['A', 'B', 'C', 'D']),
     links: _generateLinks({
       A: [
