@@ -52,13 +52,21 @@ export class BellmanFordService {
   private _getPresentationState(
     sourceId: string,
     targetId: string,
-    distances: Record<Node['id'], number>,
+    distances: { [key: Node['id']]: number },
     nodes: Node[]
   ): PresentationState {
+    const matrix = Object.entries(distances).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [nodes.find((value) => value.id === key).label]: value,
+      }),
+      {}
+    );
+
     return {
       source: nodes.find(({ id }) => sourceId === id),
       target: nodes.find(({ id }) => targetId === id),
-      matrix: distances,
+      matrix,
     };
   }
 }
