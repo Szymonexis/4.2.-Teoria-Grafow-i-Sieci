@@ -37,25 +37,22 @@ export class GraphSpaceComponent extends OnDestroyMixin implements OnInit {
 
   ngOnInit(): void {
     combineLatest([this.links$, this.currentState$])
-      .pipe(
-        untilComponentDestroyed(this),
-        filter(([links, currentState]) => !!links && !!currentState)
-      )
-      .subscribe(
-        ([
-          links,
-          {
-            source: { id: sourceId },
-            target: { id: targetId },
-          },
-        ]) => {
-          this.currentLink$.next(
-            links.find(
-              ({ target, source }) => target === targetId && source === sourceId
-            )
-          );
+      .pipe(untilComponentDestroyed(this))
+      .subscribe(([links, currentState]) => {
+        const sourceId = currentState?.source?.id;
+        const targetId = currentState?.target?.id;
+
+        // wtf, why not working? xd
+        if (!sourceId || !targetId) {
+          return;
         }
-      );
+
+        this.currentLink$.next(
+          links.find(
+            ({ target, source }) => target === targetId && source === sourceId
+          )
+        );
+      });
   }
 
   private _getLinks(): Observable<Link[]> {
@@ -72,9 +69,10 @@ export class GraphSpaceComponent extends OnDestroyMixin implements OnInit {
           data: {
             ...link.data,
             customColor:
-              id === currentLink.id
-                ? COLOR.CURRENT_LINK
-                : link.data.customColor,
+              // id === currentLink.id
+              //   ? COLOR.CURRENT_LINK
+              //   :
+              link.data.customColor,
           },
         }));
       })
